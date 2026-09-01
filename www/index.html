@@ -1,35 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Demo Announcements</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <h1>Demo Announcements</h1>
-  <p>Push notifications demo (works when app is closed).</p>
+  <p>Push notifications demo.</p>
 
   <script type="module">
     import { PushNotifications } from "@capacitor/push-notifications";
 
+    window.alert("JavaScript loaded");
+
     async function initPush() {
       try {
-        await PushNotifications.requestPermissions();
+        const permission = await PushNotifications.requestPermissions();
+        window.alert("Permission: " + permission.receive);
+
+        if (permission.receive !== "granted") {
+          throw new Error("Notification permission was not granted");
+        }
+
+        await PushNotifications.addListener("registration", function(token) {
+          window.alert("Push token: " + token.value);
+        });
+
+        await PushNotifications.addListener("registrationError", function(error) {
+          window.alert("Registration error: " + JSON.stringify(error));
+        });
+
+        await PushNotifications.addListener("pushNotificationReceived", function(notification) {
+          window.alert("Notification received: " + JSON.stringify(notification));
+        });
+
+        await PushNotifications.addListener("pushNotificationActionPerformed", function(action) {
+          window.alert("Notification tapped: " + JSON.stringify(action));
+        });
+
         await PushNotifications.register();
-
-        PushNotifications.addListener("registration", function (token) {
-          window.alert("Push token:" + String.fromCharCode(10) + token.value);
-        });
-
-        PushNotifications.addListener("pushNotificationReceived", function (notification) {
-          window.alert("Notification received:" + String.fromCharCode(10) + JSON.stringify(notification, null, 2));
-        });
-
-        PushNotifications.addListener("pushNotificationActionPerformed", function (action) {
-          window.alert("You tapped:" + String.fromCharCode(10) + action.notification.title);
-        });
-      } catch (err) {
-        window.alert("Push init error:" + String.fromCharCode(10) + (err?.message || JSON.stringify(err, null, 2)));
+        window.alert("Registration requested");
+      } catch (error) {
+        window.alert("Push init error: " + (error.message || JSON.stringify(error)));
       }
     }
 
