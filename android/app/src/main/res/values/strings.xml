@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">demo-announcements</string>
+    <string name="title_activity_main">demo-announcements</string>
+    <string name="package_name">com.example.demoannouncements</string>
+    <string name="custom_url_scheme">com.example.demoannouncements</string>
+</resources>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Demo Announcements</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <h1>Demo Announcements</h1>
+  <p>Push notifications demo (works when app is closed).</p>
+
+  <script type="module">
+    import { PushNotifications } from '@capacitor/push-notifications';
+
+    async function initPush() {
+      try {
+        await PushNotifications.requestPermissions();
+        await PushNotifications.register();
+
+        PushNotifications.addListener('registration', token => {
+          console.log('Push token:', token.value);
+          alert('Push token:
+' + token.value);
+        });
+
+        PushNotifications.addListener('pushNotificationReceived', notification => {
+          console.log('Notification received in foreground:', notification);
+        });
+
+        PushNotifications.addListener('pushNotificationActionPerformed', action => {
+          console.log('Notification tapped:', action);
+          alert('You tapped: ' + action.notification.title);
+        });
+      } catch (err) {
+        console.error('Push init error:', err);
+      }
+    }
+
+    initPush();
+  </script>
+</body>
+</html>
