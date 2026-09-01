@@ -7,46 +7,64 @@
 </head>
 <body>
   <h1>Demo Announcements</h1>
-  <p>Push notifications demo.</p>
+  <p id="status">Starting push notification test…</p>
 
-  <script type="module">
-    import { PushNotifications } from "@capacitor/push-notifications";
-
-    window.alert("JavaScript loaded");
+  <script>
+    function show(message) {
+      document.getElementById("status").textContent = message;
+      window.alert(message);
+    }
 
     async function initPush() {
       try {
+        show("JavaScript started");
+
+        if (!window.Capacitor) {
+          show("ERROR: Capacitor bridge is missing");
+          return;
+        }
+
+        const PushNotifications = window.Capacitor.Plugins.PushNotifications;
+
+        if (!PushNotifications) {
+          show("ERROR: PushNotifications plugin is missing");
+          return;
+        }
+
+        show("Push plugin found");
+
         const permission = await PushNotifications.requestPermissions();
-        window.alert("Permission: " + permission.receive);
+        show("Permission: " + permission.receive);
 
         if (permission.receive !== "granted") {
-          throw new Error("Notification permission was not granted");
+          show("Notifications were not allowed. Enable them in Android Settings.");
+          return;
         }
 
         await PushNotifications.addListener("registration", function(token) {
-          window.alert("Push token: " + token.value);
+          show("Push token: " + token.value);
         });
 
         await PushNotifications.addListener("registrationError", function(error) {
-          window.alert("Registration error: " + JSON.stringify(error));
+          show("Registration error: " + JSON.stringify(error));
         });
 
         await PushNotifications.addListener("pushNotificationReceived", function(notification) {
-          window.alert("Notification received: " + JSON.stringify(notification));
+          show("Notification received: " + JSON.stringify(notification));
         });
 
         await PushNotifications.addListener("pushNotificationActionPerformed", function(action) {
-          window.alert("Notification tapped: " + JSON.stringify(action));
+          show("Notification tapped: " + JSON.stringify(action));
         });
 
         await PushNotifications.register();
-        window.alert("Registration requested");
+        show("Registration requested — wait a few seconds for token");
       } catch (error) {
-        window.alert("Push init error: " + (error.message || JSON.stringify(error)));
+        show("Push error: " + (error.message || JSON.stringify(error)));
       }
     }
 
-    initPush();
+    window.addEventListener("load", initPush);
   </script>
 </body>
 </html>
