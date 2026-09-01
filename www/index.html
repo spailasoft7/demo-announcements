@@ -10,30 +10,26 @@
   <p>Push notifications demo (works when app is closed).</p>
 
   <script type="module">
-    import { PushNotifications } from '@capacitor/push-notifications';
+    import { PushNotifications } from "@capacitor/push-notifications";
 
     async function initPush() {
       try {
         await PushNotifications.requestPermissions();
         await PushNotifications.register();
 
-        PushNotifications.addListener('registration', token => {
-          window.alert('Push token:
-' + token.value);
+        PushNotifications.addListener("registration", function (token) {
+          window.alert("Push token:" + String.fromCharCode(10) + token.value);
         });
 
-        PushNotifications.addListener('pushNotificationReceived', notification => {
-          window.alert('Notification received:
-' + JSON.stringify(notification, null, 2));
+        PushNotifications.addListener("pushNotificationReceived", function (notification) {
+          window.alert("Notification received:" + String.fromCharCode(10) + JSON.stringify(notification, null, 2));
         });
 
-        PushNotifications.addListener('pushNotificationActionPerformed', action => {
-          window.alert('You tapped:
-' + action.notification.title);
+        PushNotifications.addListener("pushNotificationActionPerformed", function (action) {
+          window.alert("You tapped:" + String.fromCharCode(10) + action.notification.title);
         });
       } catch (err) {
-        window.alert('Push init error:
-' + (err?.message || JSON.stringify(err, null, 2)));
+        window.alert("Push init error:" + String.fromCharCode(10) + (err?.message || JSON.stringify(err, null, 2)));
       }
     }
 
