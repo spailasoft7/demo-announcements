@@ -18,21 +18,22 @@
         await PushNotifications.register();
 
         PushNotifications.addListener('registration', token => {
-          console.log('Push token:', token.value);
-          alert('Push token:
+          window.alert('Push token:
 ' + token.value);
         });
 
         PushNotifications.addListener('pushNotificationReceived', notification => {
-          console.log('Notification received in foreground:', notification);
+          window.alert('Notification received:
+' + JSON.stringify(notification, null, 2));
         });
 
         PushNotifications.addListener('pushNotificationActionPerformed', action => {
-          console.log('Notification tapped:', action);
-          alert('You tapped: ' + action.notification.title);
+          window.alert('You tapped:
+' + action.notification.title);
         });
       } catch (err) {
-        console.error('Push init error:', err);
+        window.alert('Push init error:
+' + (err?.message || JSON.stringify(err, null, 2)));
       }
     }
 
